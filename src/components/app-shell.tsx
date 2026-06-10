@@ -16,13 +16,18 @@ export function AppShell({ children }: PropsWithChildren) {
 
   return (
     <div className="shell">
+      <div aria-hidden="true" className="shell__glow shell__glow--violet" />
+      <div aria-hidden="true" className="shell__glow shell__glow--rose" />
       <div className="shell__inner">
         <header className="topbar">
           <div className="brand">
-            <div aria-hidden="true" className="brand__mark" />
+            <div aria-hidden="true" className="brand__mark">
+              <span className="brand__moon" />
+            </div>
             <div>
-              <span className="brand__eyebrow">Dream Journal</span>
-              <h1 className="brand__title">Dream Insight</h1>
+              <span className="brand__eyebrow">Dream journal</span>
+              <h1 className="brand__title">dreamfold</h1>
+              <p className="brand__tagline">a soft place for recurring symbols and quiet readings</p>
             </div>
           </div>
           <nav className="topnav" aria-label="Main navigation">

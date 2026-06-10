@@ -62,10 +62,10 @@ export function DreamForm() {
 
   return (
     <div className="stack">
-      <form className="panel form-stack" data-testid="dream-form" onSubmit={onSubmit}>
+      <form className="panel panel--journal form-stack" data-testid="dream-form" onSubmit={onSubmit}>
         <div>
           <label className="label" htmlFor="dream-text">
-            꿈 기록
+            오늘 가장 선명한 장면
           </label>
           <textarea
             id="dream-text"
@@ -98,7 +98,7 @@ export function DreamForm() {
 
         <div className="inline-actions">
           <button className="button" type="submit" disabled={loading}>
-            {loading ? "해몽을 읽는 중..." : "AI 해몽 시작"}
+            {loading ? "AI 리딩을 준비하는 중..." : "AI 분석 & 일러스트 생성"}
           </button>
         </div>
         {error ? (

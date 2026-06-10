@@ -7,7 +7,10 @@ type Props = {
 export function AnalysisResultCard({ result }: Props) {
   return (
     <section className="result-card" data-testid="analysis-result">
-      <h3>오늘의 해몽</h3>
+      <div className="result-card__hero">
+        <p className="eyebrow">Today's reading</p>
+        <h3>오늘의 해몽</h3>
+      </div>
       <div className="result-grid">
         <div>
           <p className="result-key">감정의 결</p>
@@ -26,7 +29,7 @@ export function AnalysisResultCard({ result }: Props) {
           <p>{result.symbols.map((symbol) => `${symbol.name} (${symbol.meaning})`).join(", ")}</p>
         </div>
       </div>
-      <p>{result.interpretation}</p>
+      <p className="result-card__reading">{result.interpretation}</p>
     </section>
   );
 }
