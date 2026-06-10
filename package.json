@@ -1,0 +1,31 @@
+{
+  "name": "dream-insight",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "15.5.19",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.52.0",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "22.15.21",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "jsdom": "26.1.0",
+    "typescript": "5.8.3",
+    "vitest": "3.1.4"
+  }
+}

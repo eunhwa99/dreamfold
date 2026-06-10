@@ -1,0 +1,115 @@
+"use client";
+
+import { useState } from "react";
+
+import { AnalysisResultCard } from "@/components/record/analysis-result";
+import type { AnalysisResult } from "@/lib/dreams/interpreter";
+
+const moodOptions = ["불안", "여운", "안도", "설렘", "그리움"];
+
+export function DreamForm() {
+  const [dreamText, setDreamText] = useState("");
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const createResponse = await fetch("/api/dreams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dreamText,
+          moodTags: selectedMood ? [selectedMood] : []
+        })
+      });
+
+      if (!createResponse.ok) {
+        const payload = (await createResponse.json()) as { error?: string };
+        throw new Error(payload.error ?? "create failed");
+      }
+
+      const { dreamId } = (await createResponse.json()) as { dreamId: string };
+
+      const analyzeResponse = await fetch(`/api/dreams/${dreamId}/analyze`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          dreamText,
+          moodTags: selectedMood ? [selectedMood] : []
+        })
+      });
+
+      if (!analyzeResponse.ok) {
+        const payload = (await analyzeResponse.json()) as { error?: string };
+        throw new Error(payload.error ?? "analysis failed");
+      }
+
+      const analysisPayload = (await analyzeResponse.json()) as AnalysisResult;
+      setResult(analysisPayload);
+    } catch {
+      setError("해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="stack">
+      <form className="panel form-stack" data-testid="dream-form" onSubmit={onSubmit}>
+        <div>
+          <label className="label" htmlFor="dream-text">
+            꿈 기록
+          </label>
+          <textarea
+            id="dream-text"
+            className="textarea"
+            placeholder="사라지기 전에, 기억나는 장면을 적어보세요."
+            value={dreamText}
+            onChange={(event) => setDreamText(event.target.value)}
+          />
+        </div>
+
+        <div>
+          <p className="label">지금 남은 감정</p>
+          <div className="chip-row">
+            {moodOptions.map((mood) => {
+              const selected = selectedMood === mood;
+              return (
+                <button
+                  key={mood}
+                  className="chip"
+                  data-selected={selected}
+                  type="button"
+                  onClick={() => setSelectedMood(selected ? null : mood)}
+                >
+                  {mood}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="inline-actions">
+          <button className="button" type="submit" disabled={loading}>
+            {loading ? "해몽을 읽는 중..." : "AI 해몽 시작"}
+          </button>
+        </div>
+        {error ? (
+          <div className="status" data-tone="error">
+            {error}
+          </div>
+        ) : null}
+      </form>
+
+      {loading ? <div className="message">무의식의 장면을 읽고 있어요. 잠시만 기다려 주세요.</div> : null}
+      {result ? <AnalysisResultCard result={result} /> : null}
+    </div>
+  );
+}
