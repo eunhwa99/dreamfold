@@ -1,13 +1,13 @@
 import type { DreamEntry } from "@/lib/dreams/types";
 
-type ArchiveDaySummary = {
+export type ArchiveDaySummary = {
   dateKey: string;
   displayDate: string;
   representativeMood: string | null;
   dreams: DreamEntry[];
 };
 
-type ArchiveCalendarCell = {
+export type ArchiveCalendarCell = {
   dateKey: string;
   dayNumber: number;
   inMonth: boolean;
@@ -18,6 +18,14 @@ type ArchiveCalendarCell = {
 type ArchiveCalendarQuery = {
   month?: string;
   day?: string;
+};
+
+export type ArchiveCalendarModel = {
+  month: string;
+  weeks: ArchiveCalendarCell[][];
+  selectedDay: ArchiveDaySummary;
+  previousMonth: string;
+  nextMonth: string;
 };
 
 function toDateKey(createdAt: string) {
@@ -47,7 +55,7 @@ export function getArchiveMonthKey(createdAt: string) {
   return toDateKey(createdAt).slice(0, 7);
 }
 
-export function buildArchiveCalendarModel(dreams: DreamEntry[], query: ArchiveCalendarQuery) {
+export function buildArchiveCalendarModel(dreams: DreamEntry[], query: ArchiveCalendarQuery): ArchiveCalendarModel {
   const grouped = new Map<string, ArchiveDaySummary>();
 
   dreams.forEach((dream) => {

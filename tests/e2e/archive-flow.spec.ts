@@ -12,7 +12,7 @@ test("archive page shows a month calendar shell with recorded day markers", asyn
   await expect(previousMonthLink).toBeVisible();
   await expect(nextMonthLink).toBeVisible();
   await expect(page.getByTestId("archive-day-dot").first()).toBeVisible();
-  await expect(page.getByLabel("선택한 날짜의 기록")).toHaveCount(0);
+  await expect(page.getByLabel("선택한 날짜의 기록")).toBeVisible();
 
   const nextHref = await nextMonthLink.getAttribute("href");
   await nextMonthLink.click();
@@ -21,6 +21,29 @@ test("archive page shows a month calendar shell with recorded day markers", asyn
   const firstOutsideMonthCell = page.locator('[data-current-month="false"]').first();
   await expect(firstOutsideMonthCell).toBeVisible();
   await expect(firstOutsideMonthCell).not.toHaveJSProperty("tagName", "A");
+});
+
+test("clicking a recorded day shows that day's dreams and keeps detail links", async ({ page }) => {
+  await page.goto("/archive?month=2026-06");
+
+  await page.getByRole("link", { name: /2026년 6월 10일/ }).click();
+  await expect(page).toHaveURL(/day=2026-06-10/);
+  await expect(page.getByRole("heading", { name: "2026.06.10의 꿈" })).toBeVisible();
+  await expect(page.getByText("끝없이 이어지는 복도")).toBeVisible();
+  await expect(page.getByText("바다 위의 집")).toBeVisible();
+
+  await page.getByRole("link", { name: /끝없이 이어지는 복도/ }).click();
+  await expect(page).toHaveURL(/\/dreams\/seed-school$/);
+});
+
+test("changing mood filter keeps the visible archive month and selected day", async ({ page }) => {
+  await page.goto("/archive?month=2026-06&day=2026-06-10");
+
+  await page.getByRole("link", { name: "불안 필터" }).click();
+  await expect(page).toHaveURL(/month=2026-06/);
+  await expect(page).toHaveURL(/day=2026-06-10/);
+  await expect(page).toHaveURL(/mood=%EB%B6%88%EC%95%88/);
+  await expect(page.getByRole("heading", { name: "2026.06.10의 꿈" })).toBeVisible();
 });
 
 test("archive layout remains stable on tablet", async ({ page }) => {

@@ -1,12 +1,9 @@
 import Link from "next/link";
 
-import { buildArchiveCalendarModel } from "@/lib/archive-calendar";
-import type { DreamEntry } from "@/lib/dreams/types";
+import type { ArchiveCalendarModel } from "@/lib/archive-calendar";
 
 type Props = {
-  dreams: DreamEntry[];
-  month?: string;
-  day?: string;
+  model: ArchiveCalendarModel;
   mood?: string | null;
 };
 
@@ -15,6 +12,22 @@ const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function formatMonthHeading(monthKey: string) {
   const [year, month] = monthKey.split("-").map(Number);
   return `${year}.${month.toString().padStart(2, "0")}`;
+}
+
+function formatDayLabel(dateKey: string, hasDreams: boolean, representativeMood: string | null) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const parts = [`${year}년 ${month}월 ${day}일`];
+
+  if (hasDreams) {
+    parts.push("기록 있음");
+    if (representativeMood) {
+      parts.push(`대표 감정 ${representativeMood}`);
+    }
+  } else {
+    parts.push("기록 없음");
+  }
+
+  return parts.join(", ");
 }
 
 function buildArchiveHref(params: { month: string; day?: string; mood?: string | null }) {
@@ -34,9 +47,7 @@ function buildArchiveHref(params: { month: string; day?: string; mood?: string |
   return query ? `/archive?${query}` : "/archive";
 }
 
-export function ArchiveCalendar({ dreams, month, day, mood }: Props) {
-  const model = buildArchiveCalendarModel(dreams, { month, day });
-
+export function ArchiveCalendar({ model, mood }: Props) {
   return (
     <section className="archive-calendar-shell" data-testid="archive-calendar">
       <div className="archive-calendar__header">
@@ -109,7 +120,7 @@ export function ArchiveCalendar({ dreams, month, day, mood }: Props) {
               data-has-dreams={cell.hasDreams}
               data-selected={isSelected}
               aria-current={isSelected ? "date" : undefined}
-              aria-label={`${cell.dateKey}${cell.hasDreams ? " recorded" : ""}`}
+              aria-label={formatDayLabel(cell.dateKey, cell.hasDreams, cell.representativeMood)}
             >
               {dayContent}
             </Link>

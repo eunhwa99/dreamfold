@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import type { PropsWithChildren } from "react";
 
 const tabs = [
-  { href: "/", label: "홈" },
-  { href: "/record", label: "꿈 기록" },
-  { href: "/report", label: "내 리포트" },
-  { href: "/archive", label: "보관함" }
+  { href: "/", label: "홈", shortLabel: "홈" },
+  { href: "/record", label: "꿈 기록", shortLabel: "기록" },
+  { href: "/report", label: "내 리포트", shortLabel: "리포트" },
+  { href: "/archive", label: "보관함", shortLabel: "보관함" }
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
@@ -29,11 +29,11 @@ export function AppShell({ children }: PropsWithChildren) {
           {tabs.map((tab) => {
             const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
             return (
-              <Link key={tab.href} href={tab.href} className="nav-item" data-active={active}>
+              <Link key={tab.href} href={tab.href} className="nav-item" data-active={active} aria-label={tab.label}>
                 <span className="nav-item__icon" aria-hidden="true">
                   {tab.href === "/" ? "⌂" : tab.href === "/record" ? "✎" : tab.href === "/report" ? "◐" : "☾"}
                 </span>
-                <span className="nav-item__label">{tab.label}</span>
+                <span className="nav-item__label">{tab.shortLabel}</span>
                 <span className="nav-dot" aria-hidden="true" />
               </Link>
             );
