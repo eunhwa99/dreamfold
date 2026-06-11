@@ -19,4 +19,20 @@ test.describe("record page interactions", () => {
     expect(hasOverflow).toBe(false);
     await expect(page.getByRole("button", { name: "AI 분석 & 일러스트 생성" })).toBeVisible();
   });
+
+  test("record page uses the same light background tone as the home screen", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.goto("/record");
+
+    const surfaces = await page.evaluate(() => {
+      const phone = getComputedStyle(document.querySelector(".phone")!).backgroundColor;
+      const screen = getComputedStyle(document.querySelector(".screen-screen")!).backgroundColor;
+      const form = getComputedStyle(document.querySelector(".form-card")!).backgroundColor;
+      return { phone, screen, form };
+    });
+
+    expect(surfaces.phone).toBe("rgb(250, 248, 244)");
+    expect(surfaces.screen).toBe("rgb(250, 248, 244)");
+    expect(surfaces.form).toBe("rgb(250, 248, 244)");
+  });
 });
