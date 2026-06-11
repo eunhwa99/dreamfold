@@ -11,6 +11,14 @@ test.describe("record page interactions", () => {
     await expect(page.getByRole("button", { name: "AI 분석 & 일러스트 생성" })).toBeVisible();
   });
 
+  test("record page back button returns to home", async ({ page }) => {
+    await page.goto("/record");
+
+    await page.getByLabel("이전으로").click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole("heading", { name: "오늘의 꿈, 기록해볼까요?" })).toBeVisible();
+  });
+
   test("record page stays usable on mobile without horizontal overflow", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/record");
@@ -25,13 +33,13 @@ test.describe("record page interactions", () => {
     await page.goto("/record");
 
     const surfaces = await page.evaluate(() => {
-      const phone = getComputedStyle(document.querySelector(".phone")!).backgroundColor;
+      const shell = getComputedStyle(document.querySelector(".page-shell")!).backgroundColor;
       const screen = getComputedStyle(document.querySelector(".screen-screen")!).backgroundColor;
       const form = getComputedStyle(document.querySelector(".form-card")!).backgroundColor;
-      return { phone, screen, form };
+      return { shell, screen, form };
     });
 
-    expect(surfaces.phone).toBe("rgb(250, 248, 244)");
+    expect(surfaces.shell).toBe("rgb(250, 248, 244)");
     expect(surfaces.screen).toBe("rgb(250, 248, 244)");
     expect(surfaces.form).toBe("rgb(250, 248, 244)");
   });

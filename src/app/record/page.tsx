@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { AppShell } from "@/components/app-shell";
 import { DreamForm } from "@/components/record/dream-form";
 
@@ -6,9 +8,9 @@ export default function RecordPage() {
     <AppShell>
       <section className="screen-screen">
         <div className="screen-header">
-          <button className="back-btn" type="button" aria-label="이전으로">
+          <Link href="/" className="back-btn" aria-label="이전으로">
             ‹
-          </button>
+          </Link>
           <span className="screen-title">새 꿈 기록</span>
           <span className="screen-action">저장</span>
         </div>

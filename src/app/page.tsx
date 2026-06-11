@@ -63,7 +63,7 @@ export default function HomePage() {
         </section>
 
         <Link href="/record" className="fab" aria-label="오늘 꿈 기록하기">
-          +
+          오늘 꿈 기록하기
         </Link>
       </section>
     </AppShell>

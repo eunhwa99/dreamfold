@@ -15,24 +15,17 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname() ?? "/";
 
   return (
-    <div className="app-frame">
-      <header className="brand-lockup">
-        <div aria-hidden="true" className="brand-lockup__mark" />
-        <div>
-          <p className="brand-lockup__eyebrow">Dream journal</p>
-          <h1 className="brand-lockup__wordmark">dreamfold</h1>
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand-lockup">
+          <div aria-hidden="true" className="brand-lockup__mark" />
+          <div>
+            <p className="brand-lockup__eyebrow">Dream journal</p>
+            <h1 className="brand-lockup__wordmark">dreamfold</h1>
+          </div>
         </div>
-      </header>
 
-      <div className="phone">
-        <div className="status-bar" aria-hidden="true">
-          <span>9:41</span>
-          <span>●●●</span>
-        </div>
-        <div className="phone__viewport">
-          <main className="page">{children}</main>
-        </div>
-        <nav className="bottom-nav" aria-label="Main navigation">
+        <nav className="primary-nav" aria-label="Main navigation">
           {tabs.map((tab) => {
             const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
             return (
@@ -46,6 +39,10 @@ export function AppShell({ children }: PropsWithChildren) {
             );
           })}
         </nav>
+      </header>
+
+      <div className="page-shell">
+        <main className="page">{children}</main>
       </div>
     </div>
   );
