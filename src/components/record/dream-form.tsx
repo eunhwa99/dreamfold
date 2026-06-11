@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { AnalysisResultCard } from "@/components/record/analysis-result";
-import type { AnalysisResult } from "@/lib/dreams/interpreter";
+import type { AnalysisResult } from "@/lib/dreams/types";
 
 const moodOptions = ["불안", "여운", "안도", "설렘", "그리움"];
 
@@ -13,12 +14,14 @@ export function DreamForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [savedDreamId, setSavedDreamId] = useState<string | null>(null);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError(null);
     setResult(null);
+    setSavedDreamId(null);
 
     try {
       const createResponse = await fetch("/api/dreams", {
@@ -36,6 +39,7 @@ export function DreamForm() {
       }
 
       const { dreamId } = (await createResponse.json()) as { dreamId: string };
+      setSavedDreamId(dreamId);
 
       const analyzeResponse = await fetch(`/api/dreams/${dreamId}/analyze`, {
         method: "POST",
@@ -47,14 +51,17 @@ export function DreamForm() {
       });
 
       if (!analyzeResponse.ok) {
-        const payload = (await analyzeResponse.json()) as { error?: string };
-        throw new Error(payload.error ?? "analysis failed");
+        throw new Error("해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
       }
 
       const analysisPayload = (await analyzeResponse.json()) as AnalysisResult;
       setResult(analysisPayload);
-    } catch {
-      setError("해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error && caughtError.message
+          ? caughtError.message
+          : "해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -95,12 +102,17 @@ export function DreamForm() {
 
         <div className="inline-actions inline-actions--full">
           <button className="generate-btn" type="submit" disabled={loading}>
-            {loading ? "AI 리딩을 준비하는 중..." : "AI 분석 & 일러스트 생성"}
+            {loading ? "저장 후 리딩을 준비하는 중..." : "저장하고 AI 리딩 보기"}
           </button>
         </div>
         {error ? (
           <div className="status" data-tone="error">
             {error}
+          </div>
+        ) : null}
+        {savedDreamId ? (
+          <div className="status" data-tone="success">
+            보관함에 저장되었어요. <Link href={`/dreams/${savedDreamId}`}>상세 보기</Link>
           </div>
         ) : null}
       </form>

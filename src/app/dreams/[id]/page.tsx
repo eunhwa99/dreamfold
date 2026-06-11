@@ -28,8 +28,18 @@ export default async function DreamDetailPage({
               <p>{dream.analysis.currentStateReflection}</p>
             </div>
             <div>
-              <p className="result-key">핵심 장면</p>
-              <div className="scene-box">{dream.analysis.scenePrompt}</div>
+              <p className="result-key">장면 스케치</p>
+              <div className="scene-box">{dream.analysis.sceneSummary}</div>
+            </div>
+            <div>
+              <p className="result-key">상징 단서</p>
+              <div className="symbol-pill-row">
+                {dream.analysis.symbols.map((symbol) => (
+                  <span key={symbol.name} className="symbol-pill">
+                    {symbol.label}
+                  </span>
+                ))}
+              </div>
             </div>
             <div>
               <p className="result-key">오늘의 해몽</p>

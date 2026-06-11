@@ -1,4 +1,4 @@
-import type { AnalysisResult } from "@/lib/dreams/interpreter";
+import type { AnalysisResult } from "@/lib/dreams/types";
 
 type Props = {
   result: AnalysisResult;
@@ -7,13 +7,17 @@ type Props = {
 export function AnalysisResultCard({ result }: Props) {
   return (
     <section className="analysis-screen" data-testid="analysis-result">
-      <div className="s3-illust">
-        <span className="star star-1" />
-        <span className="star star-2" />
-        <span className="star star-3" />
-        <span className="orb orb-1" />
-        <span className="orb orb-2" />
-        <div className="s3-illust-label">AI 생성 일러스트</div>
+      <div className="scene-preview">
+        <p className="section-kicker">장면 스케치</p>
+        <h3>{result.sceneSummary}</h3>
+        <p>{result.emotionalSummary}</p>
+        <div className="symbol-pill-row">
+          {result.symbols.map((symbol) => (
+            <span key={symbol.name} className="symbol-pill">
+              {symbol.label}
+            </span>
+          ))}
+        </div>
       </div>
 
       <div className="s3-body">
@@ -24,8 +28,8 @@ export function AnalysisResultCard({ result }: Props) {
         <div className="insight-row">
           <div className="insight-card">
             <span className="insight-emoji">✦</span>
-            <div className="insight-label">핵심 심볼</div>
-            <div className="insight-value">{result.symbols.map((symbol) => symbol.name).join(", ")}</div>
+            <div className="insight-label">상징 단서</div>
+            <div className="insight-value">{result.symbols.map((symbol) => symbol.label).join(", ")}</div>
           </div>
           <div className="insight-card">
             <span className="insight-emoji">🫧</span>
@@ -34,8 +38,8 @@ export function AnalysisResultCard({ result }: Props) {
           </div>
           <div className="insight-card">
             <span className="insight-emoji">🌙</span>
-            <div className="insight-label">핵심 장면</div>
-            <div className="insight-value">{result.scenePrompt}</div>
+            <div className="insight-label">장면 스케치</div>
+            <div className="insight-value">{result.sceneSummary}</div>
           </div>
         </div>
 

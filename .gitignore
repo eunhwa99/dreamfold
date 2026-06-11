@@ -6,6 +6,7 @@ test-results/
 .playwright/
 .playwright-mcp/
 .DS_Store
+.dreamfold-data/
 .env
 .env.local
 .env.*.local
