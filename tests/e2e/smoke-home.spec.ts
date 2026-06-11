@@ -63,3 +63,11 @@ test("home page filters entries by selected mood", async ({ page }) => {
   await expect(page.getByText("바다 위의 집")).toBeVisible();
   await expect(page.getByText("끝없이 이어지는 복도")).toHaveCount(0);
 });
+
+test("home page shows an empty state when the selected mood has no matches", async ({ page }) => {
+  await page.goto("/?mood=%EC%84%A4%EB%A0%98");
+
+  await expect(page.getByRole("heading", { name: "아직 설렘 감정의 꿈은 없어요." })).toBeVisible();
+  await expect(page.getByText("현재 선택한 감정에 해당하는 기록이 없어서 홈 카드를 비워두었어요.")).toBeVisible();
+  await expect(page.getByText("최근 기록").first()).toHaveCount(0);
+});

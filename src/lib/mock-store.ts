@@ -1,8 +1,7 @@
-import path from "node:path";
-
 import { extractInterpretation } from "@/lib/dreams/interpreter";
 import { buildDreamReport } from "@/lib/dreams/report-builder";
 import { createDreamFileStore } from "@/lib/dreams/file-store";
+import { resolveDreamStoreFilePath } from "@/lib/dreams/store-path";
 import type { DreamEntry } from "@/lib/dreams/types";
 
 const now = "2026.06.10";
@@ -29,7 +28,7 @@ const seedDreams: DreamEntry[] = [
 ];
 
 const store = createDreamFileStore({
-  filePath: path.join(process.cwd(), ".dreamfold-data", "dreams.json"),
+  filePath: resolveDreamStoreFilePath(),
   seedDreams
 });
 
