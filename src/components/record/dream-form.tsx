@@ -62,14 +62,12 @@ export function DreamForm() {
 
   return (
     <div className="stack">
-      <form className="panel form-stack" data-testid="dream-form" onSubmit={onSubmit}>
+      <form className="form-card" data-testid="dream-form" onSubmit={onSubmit}>
         <div>
-          <label className="label" htmlFor="dream-text">
-            꿈 기록
-          </label>
+          <label className="label" htmlFor="dream-text">오늘 가장 선명한 장면</label>
           <textarea
             id="dream-text"
-            className="textarea"
+            className="s2-textarea"
             placeholder="사라지기 전에, 기억나는 장면을 적어보세요."
             value={dreamText}
             onChange={(event) => setDreamText(event.target.value)}
@@ -77,15 +75,14 @@ export function DreamForm() {
         </div>
 
         <div>
-          <p className="label">지금 남은 감정</p>
-          <div className="chip-row">
+          <p className="tag-section-label">감정 태그</p>
+          <div className="tag-row">
             {moodOptions.map((mood) => {
               const selected = selectedMood === mood;
               return (
                 <button
                   key={mood}
-                  className="chip"
-                  data-selected={selected}
+                  className={`tag${selected ? " sel" : ""}`}
                   type="button"
                   onClick={() => setSelectedMood(selected ? null : mood)}
                 >
@@ -96,9 +93,9 @@ export function DreamForm() {
           </div>
         </div>
 
-        <div className="inline-actions">
-          <button className="button" type="submit" disabled={loading}>
-            {loading ? "해몽을 읽는 중..." : "AI 해몽 시작"}
+        <div className="inline-actions inline-actions--full">
+          <button className="generate-btn" type="submit" disabled={loading}>
+            {loading ? "AI 리딩을 준비하는 중..." : "AI 분석 & 일러스트 생성"}
           </button>
         </div>
         {error ? (

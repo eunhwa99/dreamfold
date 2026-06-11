@@ -6,7 +6,7 @@ test.describe("analysis flow states", () => {
     await page
       .getByPlaceholder("사라지기 전에, 기억나는 장면을 적어보세요.")
       .fill("끝없이 이어지는 학교 복도를 달리는데 문이 하나씩 닫히고 있었어요.");
-    await page.getByRole("button", { name: "AI 해몽 시작" }).click();
+    await page.getByRole("button", { name: "AI 분석 & 일러스트 생성" }).click();
 
     const result = page.getByTestId("analysis-result");
     await expect(result.getByRole("heading", { name: "오늘의 해몽" })).toBeVisible();
@@ -27,7 +27,7 @@ test.describe("analysis flow states", () => {
     await page
       .getByPlaceholder("사라지기 전에, 기억나는 장면을 적어보세요.")
       .fill("나는 물속 유리 성당 안에 있었고, 천장 위로 흐르는 빛을 바라보고 있었어요.");
-    await page.getByRole("button", { name: "AI 해몽 시작" }).click();
+    await page.getByRole("button", { name: "AI 분석 & 일러스트 생성" }).click();
 
     await expect(page.getByText("해몽을 불러오지 못했어요")).toBeVisible();
   });

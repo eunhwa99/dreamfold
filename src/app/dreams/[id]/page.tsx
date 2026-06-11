@@ -17,10 +17,10 @@ export default async function DreamDetailPage({
 
   return (
     <AppShell>
-      <article className="panel" data-testid="dream-detail">
-        <p className="eyebrow">Dream Detail</p>
-        <h2 className="section-title">{dream.title}</h2>
-        <p className="section-copy">{dream.dreamText}</p>
+      <article className="screen-screen dream-detail" data-testid="dream-detail">
+        <p className="section-kicker">Dream detail</p>
+        <h2 className="report-title">{dream.title}</h2>
+        <p className="report-copy">{dream.dreamText}</p>
         {dream.analysis ? (
           <div className="stack">
             <div>
@@ -33,7 +33,7 @@ export default async function DreamDetailPage({
             </div>
             <div>
               <p className="result-key">오늘의 해몽</p>
-              <p>{dream.analysis.interpretation}</p>
+              <p className="dream-detail__reading">{dream.analysis.interpretation}</p>
             </div>
           </div>
         ) : (

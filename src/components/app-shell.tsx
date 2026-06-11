@@ -15,32 +15,33 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname() ?? "/";
 
   return (
-    <div className="shell">
-      <div className="shell__inner">
-        <header className="topbar">
-          <div className="brand">
-            <div aria-hidden="true" className="brand__mark" />
-            <div>
-              <span className="brand__eyebrow">Dream Journal</span>
-              <h1 className="brand__title">Dream Insight</h1>
-            </div>
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand-lockup">
+          <div aria-hidden="true" className="brand-lockup__mark" />
+          <div>
+            <p className="brand-lockup__eyebrow">Dream journal</p>
+            <h1 className="brand-lockup__wordmark">dreamfold</h1>
           </div>
-          <nav className="topnav" aria-label="Main navigation">
-            {tabs.map((tab) => {
-              const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
-              return (
-                <Link
-                  key={tab.href}
-                  href={tab.href}
-                  className="topnav__link"
-                  data-active={active}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </header>
+        </div>
+
+        <nav className="primary-nav" aria-label="Main navigation">
+          {tabs.map((tab) => {
+            const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+            return (
+              <Link key={tab.href} href={tab.href} className="nav-item" data-active={active}>
+                <span className="nav-item__icon" aria-hidden="true">
+                  {tab.href === "/" ? "⌂" : tab.href === "/record" ? "✎" : tab.href === "/report" ? "◐" : "☾"}
+                </span>
+                <span className="nav-item__label">{tab.label}</span>
+                <span className="nav-dot" aria-hidden="true" />
+              </Link>
+            );
+          })}
+        </nav>
+      </header>
+
+      <div className="page-shell">
         <main className="page">{children}</main>
       </div>
     </div>

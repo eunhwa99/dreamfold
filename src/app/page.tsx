@@ -9,35 +9,62 @@ export default function HomePage() {
 
   return (
     <AppShell>
-      <section className="hero">
-        <p className="eyebrow">Tonight's Echo</p>
-        <h2>사라지기 전에, 꿈의 조각을 적어보세요.</h2>
-        <p className="lede">
-          신비로운 해몽, 가장 선명한 장면을 붙잡는 일러스트 프롬프트, 그리고 쌓일수록 진짜 내 상태를 읽어주는 리포트까지 이어지는 꿈 기록 앱입니다.
-        </p>
-        <div className="hero__actions">
-          <Link href="/record" className="button">
-            오늘 꿈 기록하기
-          </Link>
-          <Link href="/report" className="button--secondary">
-            내 리포트 보기
-          </Link>
-        </div>
-      </section>
+      <section className="home-screen">
+        <div className="s1-greeting">좋은 아침이에요</div>
+        <h2 className="s1-date">오늘의 꿈,<br />기록해볼까요?</h2>
 
-      <section className="overview-grid">
-        <TodayMessageCard />
-        <article className="panel">
-          <p className="eyebrow">Recent Reading</p>
-          <h3>{latestDream.title}</h3>
-          <p>{latestDream.analysis?.currentStateReflection ?? "아직 해몽이 없어요."}</p>
-          <p className="footer-note">최근 상징: {latestDream.symbolTags.join(", ")}</p>
+        <div className="s1-mood-row">
+          <span className="mood-pill active">전체</span>
+          <span className="mood-pill">신비로운</span>
+          <span className="mood-pill">따뜻한</span>
+        </div>
+
+        <article className="dream-card">
+          <div className="dream-card-img">
+            <span className="orb orb-1" />
+            <span className="orb orb-2" />
+            <span className="orb orb-3" />
+            <span className="star star-1" />
+            <span className="star star-2" />
+            <span className="star star-3" />
+            <span className="star star-4" />
+            <div className="dream-card-meta">
+              <h3 className="dream-card-title">{latestDream.title}</h3>
+              <p className="dream-card-time">{latestDream.createdAt}</p>
+            </div>
+          </div>
         </article>
-        <article className="panel">
-          <p className="eyebrow">Quick Path</p>
-          <h3>기록 {"->"} 해몽 {"->"} 리포트</h3>
-          <p>몽환적인 첫 경험은 빠르게, 장기적인 인사이트는 천천히 쌓이도록 설계합니다.</p>
-        </article>
+
+        <div className="small-cards">
+          <article className="small-card">
+            <div className="small-card-emoji">🌙</div>
+            <p className="small-card-label">이번 달 꿈</p>
+            <strong className="small-card-value">14개</strong>
+          </article>
+          <article className="small-card">
+            <div className="small-card-emoji">✦</div>
+            <p className="small-card-label">자주 등장</p>
+            <strong className="small-card-value">하늘, 책</strong>
+          </article>
+          <article className="small-card">
+            <div className="small-card-emoji">🫧</div>
+            <p className="small-card-label">감정 톤</p>
+            <strong className="small-card-value">평온함</strong>
+          </article>
+        </div>
+
+        <section className="home-panels">
+          <TodayMessageCard />
+          <article className="info-card">
+            <p className="section-kicker">최근 리딩</p>
+            <h3>{latestDream.analysis?.currentStateReflection ?? "아직 해몽이 없어요."}</h3>
+            <p>{latestDream.dreamText}</p>
+          </article>
+        </section>
+
+        <Link href="/record" className="fab" aria-label="오늘 꿈 기록하기">
+          오늘 꿈 기록하기
+        </Link>
       </section>
     </AppShell>
   );
