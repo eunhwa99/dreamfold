@@ -6,7 +6,7 @@ export function DreamList({ dreams }: { dreams: DreamEntry[] }) {
   return (
     <div className="archive-list">
       {dreams.map((dream) => (
-        <Link key={dream.id} href={`/dreams/${dream.id}`} className="archive-list__item">
+        <Link key={dream.id} href={`/dreams/${dream.id}`} className="archive-entry">
           <div className="archive-list__meta">
             <span>{dream.createdAt}</span>
             <span className="archive-list__pill">{dream.moodTags[0] ?? "여운"}</span>

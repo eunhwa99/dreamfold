@@ -15,38 +15,37 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname() ?? "/";
 
   return (
-    <div className="shell">
-      <div aria-hidden="true" className="shell__glow shell__glow--violet" />
-      <div aria-hidden="true" className="shell__glow shell__glow--rose" />
-      <div className="shell__inner">
-        <header className="topbar">
-          <div className="brand">
-            <div aria-hidden="true" className="brand__mark">
-              <span className="brand__moon" />
-            </div>
-            <div>
-              <span className="brand__eyebrow">Dream journal</span>
-              <h1 className="brand__title">dreamfold</h1>
-              <p className="brand__tagline">a soft place for recurring symbols and quiet readings</p>
-            </div>
-          </div>
-          <nav className="topnav" aria-label="Main navigation">
-            {tabs.map((tab) => {
-              const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
-              return (
-                <Link
-                  key={tab.href}
-                  href={tab.href}
-                  className="topnav__link"
-                  data-active={active}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </header>
-        <main className="page">{children}</main>
+    <div className="app-frame">
+      <header className="brand-lockup">
+        <div aria-hidden="true" className="brand-lockup__mark" />
+        <div>
+          <p className="brand-lockup__eyebrow">Dream journal</p>
+          <h1 className="brand-lockup__wordmark">dreamfold</h1>
+        </div>
+      </header>
+
+      <div className="phone">
+        <div className="status-bar" aria-hidden="true">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+        <div className="phone__viewport">
+          <main className="page">{children}</main>
+        </div>
+        <nav className="bottom-nav" aria-label="Main navigation">
+          {tabs.map((tab) => {
+            const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+            return (
+              <Link key={tab.href} href={tab.href} className="nav-item" data-active={active}>
+                <span className="nav-item__icon" aria-hidden="true">
+                  {tab.href === "/" ? "⌂" : tab.href === "/record" ? "✎" : tab.href === "/report" ? "◐" : "☾"}
+                </span>
+                <span className="nav-item__label">{tab.label}</span>
+                <span className="nav-dot" aria-hidden="true" />
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );

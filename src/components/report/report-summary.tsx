@@ -11,8 +11,8 @@ type Props = {
 
 export function ReportSummary({ title, items, emptyLabel }: Props) {
   return (
-    <article className="report-summary">
-      <p className="eyebrow">{title}</p>
+    <article className="insight-card report-summary">
+      <p className="insight-label">{title}</p>
       <h3>{items[0] ? `${items[0].name}의 흐름이 가장 강해요` : emptyLabel}</h3>
       <div className="metric-list">
         {items.slice(0, 4).map((item) => (

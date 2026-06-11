@@ -17,10 +17,10 @@ export default async function DreamDetailPage({
 
   return (
     <AppShell>
-      <article className="panel panel--feature dream-detail" data-testid="dream-detail">
-        <p className="eyebrow">Dream Detail</p>
-        <h2 className="section-title">{dream.title}</h2>
-        <p className="section-copy">{dream.dreamText}</p>
+      <article className="screen-screen dream-detail" data-testid="dream-detail">
+        <p className="section-kicker">Dream detail</p>
+        <h2 className="report-title">{dream.title}</h2>
+        <p className="report-copy">{dream.dreamText}</p>
         {dream.analysis ? (
           <div className="stack">
             <div>
