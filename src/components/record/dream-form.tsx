@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { AnalysisResultCard } from "@/components/record/analysis-result";
+import { readUserFacingError } from "@/lib/dreams/client-response";
 import type { AnalysisResult } from "@/lib/dreams/types";
 
 const moodOptions = ["불안", "여운", "안도", "설렘", "그리움"];
@@ -12,34 +13,60 @@ export function DreamForm() {
   const [dreamText, setDreamText] = useState("");
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [savedDreamId, setSavedDreamId] = useState<string | null>(null);
+  const [savedWithoutAnalysis, setSavedWithoutAnalysis] = useState(false);
+  const [retryDraftKey, setRetryDraftKey] = useState<string | null>(null);
+
+  function buildDraftKey() {
+    return dreamText.trim();
+  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (imageLoading) {
+      return;
+    }
+
+    const draftKey = buildDraftKey();
     setLoading(true);
     setError(null);
+    setImageError(null);
     setResult(null);
-    setSavedDreamId(null);
+
+    let createdDreamId: string | null = null;
+    let targetDreamId: string | null = null;
 
     try {
-      const createResponse = await fetch("/api/dreams", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          dreamText,
-          moodTags: selectedMood ? [selectedMood] : []
-        })
-      });
+      let dreamId = savedWithoutAnalysis && savedDreamId && retryDraftKey === draftKey ? savedDreamId : null;
 
-      if (!createResponse.ok) {
-        const payload = (await createResponse.json()) as { error?: string };
-        throw new Error(payload.error ?? "create failed");
+      if (!dreamId) {
+        setSavedDreamId(null);
+        setSavedWithoutAnalysis(false);
+
+        const createResponse = await fetch("/api/dreams", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            dreamText,
+            moodTags: selectedMood ? [selectedMood] : []
+          })
+        });
+
+        if (!createResponse.ok) {
+          throw new Error(await readUserFacingError(createResponse, "꿈 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요."));
+        }
+
+        const createdPayload = (await createResponse.json()) as { dreamId: string };
+        dreamId = createdPayload.dreamId;
+        createdDreamId = dreamId;
+        setSavedDreamId(dreamId);
       }
 
-      const { dreamId } = (await createResponse.json()) as { dreamId: string };
-      setSavedDreamId(dreamId);
+      targetDreamId = dreamId;
 
       const analyzeResponse = await fetch(`/api/dreams/${dreamId}/analyze`, {
         method: "POST",
@@ -51,19 +78,54 @@ export function DreamForm() {
       });
 
       if (!analyzeResponse.ok) {
-        throw new Error("해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+        throw new Error(await readUserFacingError(analyzeResponse, "해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요."));
       }
 
       const analysisPayload = (await analyzeResponse.json()) as AnalysisResult;
+      setSavedWithoutAnalysis(false);
+      setRetryDraftKey(null);
       setResult(analysisPayload);
     } catch (caughtError) {
       const message =
         caughtError instanceof Error && caughtError.message
           ? caughtError.message
           : "해몽을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.";
+      setSavedWithoutAnalysis(Boolean(targetDreamId));
+      setRetryDraftKey(targetDreamId ? draftKey : null);
       setError(message);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleGenerateImage() {
+    if (!savedDreamId || !result) {
+      return;
+    }
+
+    setImageLoading(true);
+    setImageError(null);
+
+    try {
+      const response = await fetch(`/api/dreams/${savedDreamId}/image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error(await readUserFacingError(response, "이미지를 생성하지 못했어요. 잠시 후 다시 시도해 주세요."));
+      }
+
+      const analysisPayload = (await response.json()) as AnalysisResult;
+      setResult(analysisPayload);
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error && caughtError.message
+          ? caughtError.message
+          : "이미지를 생성하지 못했어요. 잠시 후 다시 시도해 주세요.";
+      setImageError(message);
+    } finally {
+      setImageLoading(false);
     }
   }
 
@@ -101,7 +163,7 @@ export function DreamForm() {
         </div>
 
         <div className="inline-actions inline-actions--full">
-          <button className="generate-btn" type="submit" disabled={loading}>
+          <button className="generate-btn" type="submit" disabled={loading || imageLoading}>
             {loading ? "저장 후 리딩을 준비하는 중..." : "저장하고 AI 리딩 보기"}
           </button>
         </div>
@@ -110,7 +172,12 @@ export function DreamForm() {
             {error}
           </div>
         ) : null}
-        {savedDreamId ? (
+        {savedDreamId && savedWithoutAnalysis ? (
+          <div className="status" data-tone="success">
+            꿈 기록은 저장되었어요. <Link href={`/dreams/${savedDreamId}`}>상세 페이지에서 해몽을 다시 시도할 수 있어요.</Link>
+          </div>
+        ) : null}
+        {savedDreamId && !savedWithoutAnalysis ? (
           <div className="status" data-tone="success">
             보관함에 저장되었어요. <Link href={`/dreams/${savedDreamId}`}>상세 보기</Link>
           </div>
@@ -118,7 +185,14 @@ export function DreamForm() {
       </form>
 
       {loading ? <div className="message">무의식의 장면을 읽고 있어요. 잠시만 기다려 주세요.</div> : null}
-      {result ? <AnalysisResultCard result={result} /> : null}
+      {result ? (
+        <AnalysisResultCard
+          result={result}
+          imageLoading={imageLoading}
+          imageError={imageError}
+          onGenerateImage={handleGenerateImage}
+        />
+      ) : null}
     </div>
   );
 }

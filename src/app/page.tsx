@@ -5,6 +5,7 @@ import { MoodFilterBar } from "@/components/mood-filter-bar";
 import { TodayMessageCard } from "@/components/home/today-message-card";
 import { getSymbolLabel } from "@/lib/dreams/catalog";
 import { buildDreamReport } from "@/lib/dreams/report-builder";
+import { isDreamStoreError } from "@/lib/dreams/store-errors";
 import { getHomePageState } from "@/lib/home-state";
 import { listAvailableMoods, listDreams } from "@/lib/mock-store";
 
@@ -14,8 +15,28 @@ export default async function HomePage({
   searchParams: Promise<{ mood?: string }>;
 }) {
   const { mood } = await searchParams;
-  const dreams = listDreams();
-  const moods = listAvailableMoods();
+  let dreams;
+  let moods;
+
+  try {
+    dreams = listDreams();
+    moods = listAvailableMoods();
+  } catch (error) {
+    if (!isDreamStoreError(error)) {
+      throw error;
+    }
+
+    return (
+      <AppShell>
+        <section className="home-screen">
+          <div className="status" data-tone="error">
+            {error.message}
+          </div>
+        </section>
+      </AppShell>
+    );
+  }
+
   const homeState = getHomePageState({ mood: mood ?? null, dreams });
   const report = buildDreamReport(
     homeState.filteredDreams.map((dream) => ({
