@@ -10,7 +10,7 @@ DreamFold is a dreamy web app for recording dreams, getting AI-style interpretat
 - Revisit saved dreams in an archive
 - Review recurring moods and symbols in a report view
 
-The current build uses local mock analysis so the full product flow can be explored without external services.
+The current build calls OpenAI for dream interpretation and offers separate image generation for the saved dream scene.
 
 ## Tech Stack
 
@@ -30,6 +30,21 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Environment
+
+Create `.env.local` with:
+
+```bash
+OPENAI_API_KEY=your_api_key
+OPENAI_TEXT_MODEL=gpt-5.5
+OPENAI_IMAGE_MODEL=gpt-image-1
+DREAMFOLD_DATA_DIR=.dreamfold-data
+```
+
+`OPENAI_API_KEY` is required for live interpretation and image generation.
+`DREAMFOLD_DATA_DIR` controls where `dreams.json` and generated images are stored locally.
+`npm run test:e2e` uses an isolated temporary data directory and seeded sample dreams so the browser flows stay deterministic.
+
 ## Test
 
 ```bash
@@ -40,8 +55,6 @@ npm run build
 
 ## Roadmap
 
-- Replace mock interpretation with OpenAI-backed analysis
-- Add image generation for dream scene visuals
 - Persist dream history and reports with Supabase
 - Add authentication and private personal data storage
 - Polish the portfolio story with product screenshots and architecture notes

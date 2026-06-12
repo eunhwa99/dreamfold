@@ -3,6 +3,7 @@ import { MoodFilterBar } from "@/components/mood-filter-bar";
 import { ReportSummary } from "@/components/report/report-summary";
 import { getSymbolLabel } from "@/lib/dreams/catalog";
 import { buildDreamReport } from "@/lib/dreams/report-builder";
+import { isDreamStoreError } from "@/lib/dreams/store-errors";
 import { filterDreamsByMood, listAvailableMoods, listDreams } from "@/lib/mock-store";
 
 export default async function ReportPage({
@@ -11,8 +12,28 @@ export default async function ReportPage({
   searchParams: Promise<{ mood?: string }>;
 }) {
   const { mood } = await searchParams;
-  const dreams = filterDreamsByMood(listDreams(), mood ?? null);
-  const moods = listAvailableMoods();
+  let dreams;
+  let moods;
+
+  try {
+    dreams = filterDreamsByMood(listDreams(), mood ?? null);
+    moods = listAvailableMoods();
+  } catch (error) {
+    if (!isDreamStoreError(error)) {
+      throw error;
+    }
+
+    return (
+      <AppShell>
+        <section className="screen-screen">
+          <div className="status" data-tone="error">
+            {error.message}
+          </div>
+        </section>
+      </AppShell>
+    );
+  }
+
   const report = buildDreamReport(
     dreams.map((dream) => ({
       moodTags: dream.moodTags,

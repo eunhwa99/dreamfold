@@ -276,6 +276,43 @@ button {
 .star-3 { width: 2px; height: 2px; top: 55px; left: 100px; }
 .star-4 { width: 3px; height: 3px; bottom: 45px; right: 30px; }
 
+.image-action-row {
+  margin-top: 18px;
+}
+
+.generate-btn--secondary {
+  width: 100%;
+  background: rgba(139, 111, 191, 0.14);
+  color: var(--deep);
+}
+
+@media (prefers-color-scheme: dark) {
+  .generate-btn--secondary {
+    background: rgba(196, 181, 232, 0.14);
+    color: #f4edf8;
+  }
+}
+
+.dream-image-preview {
+  margin: 18px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.dream-image-preview__image {
+  width: 100%;
+  display: block;
+  border-radius: 20px;
+  border: 1px solid rgba(44, 32, 80, 0.08);
+  box-shadow: 0 18px 32px rgba(44, 32, 80, 0.12);
+}
+
+.dream-image-preview__caption {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
 .dream-card-meta {
   position: absolute;
   inset: auto 0 0;

@@ -68,14 +68,14 @@ describe("createDreamSchema", () => {
     });
   });
 
-  it("ignores an oversized unused transcript when dreamText is already valid", () => {
-    const resolved = resolveCreateDreamInput({
-      dreamText: "사용자가 편집한 최종 꿈 기록은 충분히 길고 그대로 저장되어야 해요.",
-      voiceTranscript: "x".repeat(6001),
-      moodTags: ["여운"]
-    });
-
-    expect(resolved.dreamText).toBe("사용자가 편집한 최종 꿈 기록은 충분히 길고 그대로 저장되어야 해요.");
+  it("rejects an oversized transcript even when dreamText is already valid", () => {
+    expect(() =>
+      createDreamSchema.parse({
+        dreamText: "사용자가 편집한 최종 꿈 기록은 충분히 길고 그대로 저장되어야 해요.",
+        voiceTranscript: "x".repeat(6001),
+        moodTags: ["여운"]
+      })
+    ).toThrow("음성 전사본이 너무 길어요. 조금 줄여서 다시 시도해 주세요.");
   });
 
   it("rejects when both the raw dream text and voice transcript are too short", () => {

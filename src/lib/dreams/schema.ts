@@ -5,7 +5,7 @@ const finalDreamTextSchema = z.string().min(20, "꿈 기록은 조금 더 자세
 export const createDreamSchema = z.object({
   dreamText: z.string().optional().default(""),
   moodTags: z.array(z.string().min(1)).max(5).default([]),
-  voiceTranscript: z.string().optional()
+  voiceTranscript: z.string().max(5000, "음성 전사본이 너무 길어요. 조금 줄여서 다시 시도해 주세요.").optional()
 });
 
 export type CreateDreamInput = z.infer<typeof createDreamSchema>;

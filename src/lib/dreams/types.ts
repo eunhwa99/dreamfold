@@ -5,6 +5,7 @@ export type SymbolMeaning = {
 };
 
 export type AnalysisResult = {
+  source?: "openai";
   interpretation: string;
   emotionalSummary: string;
   currentStateReflection: string;
@@ -12,6 +13,9 @@ export type AnalysisResult = {
   sceneSummary: string;
   scenePrompt: string;
   symbols: SymbolMeaning[];
+  imagePath?: string;
+  imagePrompt?: string;
+  imageGeneratedAt?: string;
 };
 
 export type DreamEntry = {

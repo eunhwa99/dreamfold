@@ -77,7 +77,8 @@ async function main() {
     stdio: "inherit",
     env: {
       ...process.env,
-      DREAMFOLD_DATA_DIR: dataDir
+      DREAMFOLD_DATA_DIR: dataDir,
+      DREAMFOLD_ENABLE_SEED_DATA: "1"
     }
   });
 
@@ -91,7 +92,8 @@ async function main() {
       stdio: "inherit",
       env: {
         ...process.env,
-        PLAYWRIGHT_BASE_URL: baseUrl
+        PLAYWRIGHT_BASE_URL: baseUrl,
+        DREAMFOLD_DATA_DIR: dataDir
       }
     }
   );

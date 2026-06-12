@@ -3,6 +3,7 @@ import { ArchiveCalendar } from "@/components/archive/archive-calendar";
 import { ArchiveDayPanel } from "@/components/archive/archive-day-panel";
 import { MoodFilterBar } from "@/components/mood-filter-bar";
 import { buildArchiveCalendarModel } from "@/lib/archive-calendar";
+import { isDreamStoreError } from "@/lib/dreams/store-errors";
 import { filterDreamsByMood, listAvailableMoods, listDreams } from "@/lib/mock-store";
 
 export default async function ArchivePage({
@@ -11,8 +12,28 @@ export default async function ArchivePage({
   searchParams: Promise<{ mood?: string; month?: string; day?: string }>;
 }) {
   const { mood, month, day } = await searchParams;
-  const dreams = filterDreamsByMood(listDreams(), mood ?? null);
-  const moods = listAvailableMoods();
+  let dreams;
+  let moods;
+
+  try {
+    dreams = filterDreamsByMood(listDreams(), mood ?? null);
+    moods = listAvailableMoods();
+  } catch (error) {
+    if (!isDreamStoreError(error)) {
+      throw error;
+    }
+
+    return (
+      <AppShell>
+        <section className="screen-screen">
+          <div className="status" data-tone="error">
+            {error.message}
+          </div>
+        </section>
+      </AppShell>
+    );
+  }
+
   const model = buildArchiveCalendarModel(dreams, { month, day });
 
   return (
