@@ -5,7 +5,8 @@ import { MoodFilterBar } from "@/components/mood-filter-bar";
 import { TodayMessageCard } from "@/components/home/today-message-card";
 import { getSymbolLabel } from "@/lib/dreams/catalog";
 import { buildDreamReport } from "@/lib/dreams/report-builder";
-import { filterDreamsByMood, listAvailableMoods, listDreams } from "@/lib/mock-store";
+import { getHomePageState } from "@/lib/home-state";
+import { listAvailableMoods, listDreams } from "@/lib/mock-store";
 
 export default async function HomePage({
   searchParams
@@ -15,10 +16,9 @@ export default async function HomePage({
   const { mood } = await searchParams;
   const dreams = listDreams();
   const moods = listAvailableMoods();
-  const filteredDreams = filterDreamsByMood(dreams, mood ?? null);
-  const latestDream = filteredDreams[0] ?? dreams[0];
+  const homeState = getHomePageState({ mood: mood ?? null, dreams });
   const report = buildDreamReport(
-    filteredDreams.map((dream) => ({
+    homeState.filteredDreams.map((dream) => ({
       moodTags: dream.moodTags,
       symbolTags: dream.symbolTags,
       title: dream.title,
@@ -26,7 +26,7 @@ export default async function HomePage({
     }))
   );
 
-  if (!latestDream) {
+  if (homeState.type === "empty") {
     return (
       <AppShell>
         <section className="home-screen">
@@ -38,6 +38,31 @@ export default async function HomePage({
       </AppShell>
     );
   }
+
+  if (homeState.type === "empty-filter") {
+    return (
+      <AppShell>
+        <section className="home-screen">
+          <div className="s1-greeting">좋은 아침이에요</div>
+          <h2 className="s1-date">아직 {homeState.mood} 감정의 꿈은 없어요.</h2>
+
+          <MoodFilterBar currentPath="/" moods={moods} selectedMood={mood ?? null} />
+
+          <article className="info-card">
+            <p className="section-kicker">필터 결과</p>
+            <h3>다른 감정으로 다시 둘러보거나, 오늘의 꿈을 새로 기록해보세요.</h3>
+            <p>현재 선택한 감정에 해당하는 기록이 없어서 홈 카드를 비워두었어요.</p>
+          </article>
+
+          <Link href="/record" className="fab" aria-label="오늘 꿈 기록하기">
+            오늘 꿈 기록하기
+          </Link>
+        </section>
+      </AppShell>
+    );
+  }
+
+  const { filteredDreams, latestDream } = homeState;
 
   return (
     <AppShell>

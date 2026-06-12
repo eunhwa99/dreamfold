@@ -1,15 +1,15 @@
 import { defineConfig } from "@playwright/test";
 
+const baseUrl = process.env.PLAYWRIGHT_BASE_URL;
+
+if (!baseUrl) {
+  throw new Error("PLAYWRIGHT_BASE_URL is required. Run E2E via `npm run test:e2e` so the wrapper can provide an isolated server.");
+}
+
 export default defineConfig({
   testDir: "./tests/e2e",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: baseUrl,
     trace: "on-first-retry"
-  },
-  webServer: {
-    command: "npm run dev -- --port 3000",
-    url: "http://localhost:3000",
-    reuseExistingServer: true,
-    timeout: 120000
   }
 });
